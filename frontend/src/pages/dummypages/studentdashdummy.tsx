@@ -210,12 +210,20 @@ const StudentDashDummy: React.FC = () => {
     const [view, setView] = useState<'dashboard' | 'course-details'>('dashboard');
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showToast, setShowToast] = useState(false);
 
     const handleStartCourse = () => {
         setIsLoading(true);
         setTimeout(() => {
             navigate('/dummy-watch');
         }, 1000);
+    };
+
+    const handleNonInteractive = () => {
+        setShowToast(true);
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
     };
 
     // Static Data
@@ -227,6 +235,14 @@ const StudentDashDummy: React.FC = () => {
     };
 
     const myLearningCourses: Course[] = [
+        {
+            id: '3',
+            title: 'IT and Environment',
+            description: 'Exploring the impact of technology on our ecosystem.',
+            thumbnailUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop', // Earth/Tech
+            modules: 3,
+            tutorName: 'Sarah Tech'
+        },
         {
             id: '1',
             title: 'Photosynthesis: The Engine of Life',
@@ -242,14 +258,6 @@ const StudentDashDummy: React.FC = () => {
             thumbnailUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1000&auto=format&fit=crop', // Lab/Chemistry
             modules: 6,
             tutorName: 'Prof. Alan Bond'
-        },
-        {
-            id: '3',
-            title: 'IT and Environment',
-            description: 'Exploring the impact of technology on our ecosystem.',
-            thumbnailUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop', // Earth/Tech
-            modules: 3,
-            tutorName: 'Sarah Tech'
         }
     ];
 
@@ -302,8 +310,10 @@ const StudentDashDummy: React.FC = () => {
         if (courseId === '3') {
             setView('course-details');
             window.scrollTo(0, 0);
+        } else {
+            // For non-interactive courses, show toast
+            handleNonInteractive();
         }
-        // Others do nothing
     };
 
     return (
@@ -324,9 +334,10 @@ const StudentDashDummy: React.FC = () => {
                     {sidebarItems.map(item => (
                         <div
                             key={item.label}
-                            className={`flex items-center lg:px-4 px-2 py-3.5 rounded-xl transition-all cursor-default ${item.active
-                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-600'
+                            onClick={!item.active ? handleNonInteractive : undefined}
+                            className={`flex items-center lg:px-4 px-2 py-3.5 rounded-xl transition-all ${item.active
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 cursor-default'
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-600 cursor-pointer'
                                 }`}
                         >
                             <i className={`fas ${item.icon} w-6 text-center text-lg`}></i>
@@ -344,6 +355,13 @@ const StudentDashDummy: React.FC = () => {
                             <p className="text-xs text-gray-400 truncate">Student Plan</p>
                         </div>
                     </div>
+                    <button
+                        onClick={() => navigate('/login')}
+                        className="mx-4 mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                    >
+                        <i className="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
             </aside>
 
@@ -377,12 +395,18 @@ const StudentDashDummy: React.FC = () => {
                     </div>
 
                     <div className="flex items-center space-x-5 ml-6">
-                        <button className="relative p-2 text-gray-500 hover:text-blue-600 transition-colors">
+                        <button
+                            onClick={handleNonInteractive}
+                            className="relative p-2 text-gray-500 hover:text-blue-600 transition-colors"
+                        >
                             <i className="fas fa-bell text-xl"></i>
                             <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                         </button>
 
-                        <div className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden cursor-pointer">
+                        <div
+                            onClick={handleNonInteractive}
+                            className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden cursor-pointer"
+                        >
                             <img src={currentUser.avatarUrl} alt="User" className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -439,7 +463,10 @@ const StudentDashDummy: React.FC = () => {
                                         <h2 className="text-xl font-bold text-gray-900">CodeMaster Academy</h2>
                                         <p className="text-sm text-gray-500">Subscribed Channel • 1.2M Subscribers</p>
                                     </div>
-                                    <button className="ml-auto px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                                    <button
+                                        onClick={handleNonInteractive}
+                                        className="ml-auto px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg text-sm hover:bg-gray-200 transition-colors"
+                                    >
                                         Subscribed
                                     </button>
                                 </div>
@@ -464,6 +491,41 @@ const StudentDashDummy: React.FC = () => {
 
                 </div>
             </main>
+
+            {/* Toast Notification */}
+            {showToast && (
+                <div className="fixed top-6 right-6 z-50 animate-slide-in-fade">
+                    <div className="bg-white border border-gray-200 rounded-xl shadow-2xl px-6 py-4 min-w-[320px] max-w-md">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                                <i className="fas fa-info-circle text-blue-500 text-lg"></i>
+                            </div>
+                            <div className="flex-1 pt-1">
+                                <p className="text-gray-800 font-medium leading-relaxed">
+                                    This section is not part of the current demo scope.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <style>{`
+                @keyframes slide-in-fade {
+                    from {
+                        opacity: 0;
+                        transform: translateX(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                .animate-slide-in-fade {
+                    animation: slide-in-fade 0.3s ease-out;
+                }
+            `}</style>
         </div>
     );
 };

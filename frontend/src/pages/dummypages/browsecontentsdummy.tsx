@@ -26,6 +26,7 @@ const BrowseContentsDummy: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showDemoVideo, setShowDemoVideo] = useState(false);
+    const [showToast, setShowToast] = useState(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const navigate = useNavigate();
 
@@ -86,7 +87,14 @@ const BrowseContentsDummy: React.FC = () => {
         e.stopPropagation();
         e.preventDefault();
         if (item._id === 'medical-001') {
+            // Only the first video (medical-001) plays the demo video
             setShowDemoVideo(true);
+        } else {
+            // All other videos show the demo limitation toast
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 4000); // Auto-dismiss after 4 seconds
         }
     };
 
@@ -282,6 +290,24 @@ const BrowseContentsDummy: React.FC = () => {
                     </div>
                 </div>
             </footer>
+
+            {/* Toast Notification */}
+            {showToast && (
+                <div className="fixed top-6 right-6 z-[200] animate-slide-in-fade">
+                    <div className="bg-white border border-gray-200 rounded-xl shadow-2xl px-6 py-4 min-w-[320px] max-w-md">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                                <i className="fas fa-info-circle text-blue-500 text-lg"></i>
+                            </div>
+                            <div className="flex-1 pt-1">
+                                <p className="text-gray-800 font-medium leading-relaxed">
+                                    AI summarization is demonstrated using a single reference video in this demo.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style>{`
                 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -548,6 +574,22 @@ const BrowseContentsDummy: React.FC = () => {
                 @media (max-width: 768px) {
                     .hero-title { font-size: 36px; }
                     .hero-search-container { max-width: 100%; }
+                }
+
+                /* Toast Animation */
+                @keyframes slide-in-fade {
+                    from {
+                        opacity: 0;
+                        transform: translateX(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                .animate-slide-in-fade {
+                    animation: slide-in-fade 0.3s ease-out;
                 }
             `}</style>
         </div>

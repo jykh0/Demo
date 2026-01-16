@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Import Assets
 // @ts-ignore
@@ -33,6 +33,7 @@ const DummyWatchCourse: React.FC = () => {
     const [isLiked, setIsLiked] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const navigate = useNavigate();
 
     // Module Indicator - 1 second
     useEffect(() => {
@@ -81,6 +82,11 @@ const DummyWatchCourse: React.FC = () => {
     const toggleLike = () => {
         setIsLiked(!isLiked);
         setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+    };
+
+    // Handle video end - navigate to quiz page
+    const handleVideoEnd = () => {
+        navigate('/dummy-quiz-page');
     };
 
     return (
@@ -225,8 +231,8 @@ const DummyWatchCourse: React.FC = () => {
                                             <video
                                                 ref={videoRef}
                                                 src={tutorVideo}
-                                                loop
                                                 muted
+                                                onEnded={handleVideoEnd}
                                                 className="w-full h-full object-cover"
                                             />
                                             {/* Mute Control */}

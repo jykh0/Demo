@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 // @ts-ignore
 import defaultThumbnail from '../../../assets/dummyfiles2/download.jpg';
 
@@ -15,6 +16,7 @@ const MedicalDummy: React.FC = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showToast, setShowToast] = useState(false);
 
     // Track if video was uploaded in this session
     const [hasUploadedVideo, setHasUploadedVideo] = useState(false);
@@ -23,6 +25,7 @@ const MedicalDummy: React.FC = () => {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const thumbnailInputRef = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate();
 
     // Dummy user data
     const dummyUser = {
@@ -118,6 +121,13 @@ const MedicalDummy: React.FC = () => {
         window.scrollTo(0, 0);
     };
 
+    const handleNonInteractive = () => {
+        setShowToast(true);
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
+    };
+
     return (
         <div className="min-h-screen bg-[#F9F9F9] font-sans flex flex-col">
             {/* Topbar - Studio Pro Style */}
@@ -148,7 +158,7 @@ const MedicalDummy: React.FC = () => {
                             </button>
                         )}
                         <div className="h-6 w-px bg-gray-200 mx-2"></div>
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                        <div onClick={handleNonInteractive} className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm cursor-pointer">
                             {dummyUser.initial}
                         </div>
                     </div>
@@ -199,13 +209,13 @@ const MedicalDummy: React.FC = () => {
                                 </a>
                             </li>
                             <li>
-                                <a className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all border-l-4 border-transparent hover:border-red-500" href="#">
+                                <a onClick={handleNonInteractive} className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all border-l-4 border-transparent hover:border-red-500" href="#">
                                     <i className="fas fa-chart-line text-sm w-5 text-center"></i>
                                     <span>Analytics</span>
                                 </a>
                             </li>
                             <li>
-                                <a className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all border-l-4 border-transparent hover:border-red-500" href="#">
+                                <a onClick={handleNonInteractive} className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all border-l-4 border-transparent hover:border-red-500" href="#">
                                     <i className="fas fa-cog text-sm w-5 text-center"></i>
                                     <span>Settings</span>
                                 </a>
@@ -574,6 +584,50 @@ const MedicalDummy: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* Toast Notification */}
+            {showToast && (
+                <div className="fixed top-6 right-6 z-50 animate-slide-in-fade">
+                    <div className="bg-white border border-gray-200 rounded-xl shadow-2xl px-6 py-4 min-w-[320px] max-w-md">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                                <i className="fas fa-info-circle text-blue-500 text-lg"></i>
+                            </div>
+                            <div className="flex-1 pt-1">
+                                <p className="text-gray-800 font-medium leading-relaxed">
+                                    This section is not part of the current demo scope.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <style>{`
+                @keyframes slide-in-fade {
+                    from {
+                        opacity: 0;
+                        transform: translateX(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                .animate-slide-in-fade {
+                    animation: slide-in-fade 0.3s ease-out;
+                }
+                
+                @keyframes fade-in {
+                    from { opacity: 0; transform: scale(0.95); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+                
+                .animate-fade-in {
+                    animation: fade-in 0.3s ease-out;
+                }
+            `}</style>
         </div>
     );
 };

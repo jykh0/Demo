@@ -1,50 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { API_CONFIG, login } from '../config/api';
-import { Link, useNavigate } from 'react-router-dom';
-import Toast from '../components/Toast';
-import { useToast } from '../hooks/useToast';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState<string>('');
   const navigate = useNavigate();
-  const { toasts, removeToast, showSuccess, showError, showWarning, showInfo } = useToast();
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError('');
-    try {
-      const res = await login((emailRef.current?.value || '').trim(), passwordRef.current?.value || '');
-      localStorage.setItem('token', res.token);
-      localStorage.setItem('user', JSON.stringify(res.user));
-      if (res.user.role === 'admin') navigate('/admin');
-      else if (res.user.role === 'organization') {
-        if (res.user.isApproved) {
-          navigate('/Tutordashboard');
-        } else {
-          showWarning('Your organization account is pending admin approval. Please wait for approval.');
-          navigate('/home');
-        }
-      } else if (res.user.role === 'content_creator') {
-        if (res.user.isApproved) {
-          navigate('/CreatorDashboard');
-        } else {
-          showWarning('Your creator account is pending verification. Please wait for approval.');
-          navigate('/home');
-        }
-      }
-      else navigate('/home');
-    } catch (err: any) {
-      let msg = 'Login failed.';
-      if (err && err.message) {
-        try {
-          msg = JSON.parse(err.message).error || msg;
-        } catch { msg = err.message; }
-      }
-      setError(msg);
-    }
-  }
 
   return (
     <section className="auth-container">
@@ -118,114 +76,56 @@ const Login: React.FC = () => {
               <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
             </svg>
           </div>
-          <h2>Login to your account</h2>
-          <p className="form-subtitle">Welcome back! Please enter your details</p>
+          <h2>Choose Your Role</h2>
+          <p className="form-subtitle">Select a role to explore the demo</p>
         </div>
 
-        <form className="form" onSubmit={onSubmit}>
-          <div className="input-group">
-            <label>
-              <span className="label-icon">✉️</span>
-              Email Address
-            </label>
-            <div className="input-wrapper">
-              <input
-                ref={emailRef}
-                type="email"
-                placeholder="Enter Your Email"
-                required
-                className="form-input"
-              />
-              <div className="input-glow"></div>
-            </div>
-          </div>
-
-          <div className="input-group">
-            <label>
-              <span className="label-icon">🔒</span>
-              Password
-            </label>
-            <div className="password-field">
-              <div className="input-wrapper">
-                <input
-                  ref={passwordRef}
-                  type="password"
-                  placeholder="Enter Your Password"
-                  required
-                  className="form-input"
-                />
-                <div className="input-glow"></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="form-options">
-            <label className="remember-me">
-              <input type="checkbox" />
-              <span className="checkmark"></span>
-              Remember me
-            </label>
-            <a href="#" className="forgot-password">Forgot password?</a>
-          </div>
-
-          <button className="primary" type="submit">
-            <span className="btn-text">Login</span>
+        <div className="form">
+          <button
+            className="primary"
+            type="button"
+            onClick={() => navigate('/dummy-student-dash')}
+          >
+            <span className="btn-text">Continue as Student</span>
             <span className="btn-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 14l9-5-9-5-9 5 9 5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
             <div className="btn-shine"></div>
           </button>
 
-          <div className="divider">
-            <span className="divider-line"></span>
-            <span className="divider-text">Or continue with</span>
-            <span className="divider-line"></span>
-          </div>
-
-          <div className="social-row">
-            <a className="social google" href={`${API_CONFIG.BASE_URL}/api/auth/google`}>
-              <span className="social-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                </svg>
-              </span>
-              <span className="social-text">Google</span>
-            </a>
-            <a className="social facebook" href={`${API_CONFIG.BASE_URL}/api/auth/facebook`}>
-              <span className="social-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" fill="currentColor" />
-                </svg>
-              </span>
-              <span className="social-text">Facebook</span>
-            </a>
-          </div>
-
-          <div className="alt-actions">
-            <span>Don't have an account?</span>
-            <Link className="link" to="/register">
-              <span>Sign up</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
-          </div>
-
-          {!!error && (
-            <div className="error">
+          <button
+            className="primary"
+            type="button"
+            onClick={() => navigate('/tutor-dummy')}
+          >
+            <span className="btn-text">Continue as Tutor</span>
+            <span className="btn-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span>{error}</span>
-            </div>
-          )}
-        </form>
+            </span>
+            <div className="btn-shine"></div>
+          </button>
+
+          <button
+            className="primary"
+            type="button"
+            onClick={() => navigate('/medical-dummy')}
+          >
+            <span className="btn-text">Continue as Content Creator</span>
+            <span className="btn-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <div className="btn-shine"></div>
+          </button>
+        </div>
       </div>
 
       <style>{`
@@ -1185,18 +1085,6 @@ const Login: React.FC = () => {
       }
       @media (max-width: 980px) { .auth-container { grid-template-columns: 1fr; min-height: 70vh; margin:1rem; } .left-panel { display:none; } .auth-container::before{display:none;} .form{max-width:100%;} }
       `}</style>
-
-      {/* Toast Notifications */}
-      <div className="fixed top-6 right-6 z-[100] space-y-3">
-        {toasts.map(toast => (
-          <Toast
-            key={toast.id}
-            message={toast.message}
-            type={toast.type}
-            onClose={() => removeToast(toast.id)}
-          />
-        ))}
-      </div>
     </section>
   );
 };

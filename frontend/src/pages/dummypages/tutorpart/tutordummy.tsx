@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Types
 interface Module {
@@ -13,6 +14,8 @@ interface Module {
 const TutorDummy: React.FC = () => {
     // State management for view switching (dashboard vs upload page)
     const [currentView, setCurrentView] = useState<'dashboard' | 'upload'>('dashboard');
+    const [showToast, setShowToast] = useState(false);
+    const navigate = useNavigate();
 
     // Training modal states
     const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -148,6 +151,13 @@ const TutorDummy: React.FC = () => {
         }, 100); // 100ms intervals
     };
 
+    const handleNonInteractive = () => {
+        setShowToast(true);
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
+    };
+
     const handleViewChannelPage = () => {
         // Reset everything and go back to dashboard
         setShowSuccessModal(false);
@@ -182,19 +192,26 @@ const TutorDummy: React.FC = () => {
                         </div>
                         <div className="topbar-right">
                             <div className="flex items-center space-x-4">
-                                <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">My Channel</a>
+                                <a href="#" onClick={handleNonInteractive} className="text-gray-700 hover:text-blue-600 font-medium">My Channel</a>
                                 <h1 className="text-2xl font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors" onClick={() => setCurrentView('dashboard')}>Dashboard</h1>
                             </div>
                             <div className="flex items-center space-x-4">
-                                <button className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors">
+                                <button onClick={handleNonInteractive} className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors">
                                     <i className="fas fa-bell text-lg"></i>
                                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></span>
                                 </button>
-                                <div className="flex items-center space-x-3">
+                                <div onClick={handleNonInteractive} className="flex items-center space-x-3 cursor-pointer">
                                     <div className="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                                         <span className="text-white font-bold text-sm">S</span>
                                     </div>
                                 </div>
+                                <button
+                                    onClick={() => navigate('/login')}
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors flex items-center gap-2"
+                                >
+                                    <i className="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -204,14 +221,14 @@ const TutorDummy: React.FC = () => {
                         <nav className="flex-1 p-4">
                             <ul className="space-y-2">
                                 <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleCreateCourseClick}><i className="fas fa-upload text-sm"></i><span>Upload Course</span></a></li>
-                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#"><i className="fas fa-chart-bar text-sm"></i><span>Analytics</span></a></li>
-                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#"><i className="fas fa-comments text-sm"></i><span>Comments</span></a></li>
-                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#"><i className="fas fa-dollar-sign text-sm"></i><span>Monetization</span></a></li>
-                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#"><i className="fas fa-edit text-sm"></i><span>Edit Uploads</span></a></li>
+                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleNonInteractive}><i className="fas fa-chart-bar text-sm"></i><span>Analytics</span></a></li>
+                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleNonInteractive}><i className="fas fa-comments text-sm"></i><span>Comments</span></a></li>
+                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleNonInteractive}><i className="fas fa-dollar-sign text-sm"></i><span>Monetization</span></a></li>
+                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleNonInteractive}><i className="fas fa-edit text-sm"></i><span>Edit Uploads</span></a></li>
                             </ul>
                         </nav>
                         <div className="settings-section p-4">
-                            <button className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium"><i className="fas fa-cog text-sm"></i><span>Channel Setup</span></button>
+                            <button onClick={handleNonInteractive} className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium"><i className="fas fa-cog text-sm"></i><span>Channel Setup</span></button>
                         </div>
                     </div>
 
@@ -262,7 +279,7 @@ const TutorDummy: React.FC = () => {
                                     {/* Recent Courses */}
                                     <div className="lg:col-span-2">
                                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                                            <div className="flex items-center justify-between mb-6"><h3 className="text-xl font-semibold text-gray-800">Recent Courses</h3><button className="text-blue-600 hover:text-blue-700 font-medium text-sm">View All</button></div>
+                                            <div className="flex items-center justify-between mb-6"><h3 className="text-xl font-semibold text-gray-800">Recent Courses</h3><button onClick={handleNonInteractive} className="text-blue-600 hover:text-blue-700 font-medium text-sm">View All</button></div>
                                             <div className="space-y-4">
                                                 {dummyCourses.map((course) => (
                                                     <div key={course.id} className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -284,11 +301,11 @@ const TutorDummy: React.FC = () => {
                                                     <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3"><i className="fas fa-plus text-white text-sm"></i></div>
                                                     <div><p className="font-medium text-gray-800">Create New Course</p><p className="text-sm text-gray-600">Start building your next course</p></div>
                                                 </button>
-                                                <button className="w-full flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors text-left">
+                                                <button onClick={handleNonInteractive} className="w-full flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors text-left">
                                                     <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3"><i className="fas fa-chart-line text-white text-sm"></i></div>
                                                     <div><p className="font-medium text-gray-800">View Analytics</p><p className="text-sm text-gray-600">Check your performance</p></div>
                                                 </button>
-                                                <button className="w-full flex items-center p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-left">
+                                                <button onClick={handleNonInteractive} className="w-full flex items-center p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-left">
                                                     <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center mr-3"><i className="fas fa-tv text-white text-sm"></i></div>
                                                     <div><p className="font-medium text-gray-800">View My Channel</p><p className="text-sm text-gray-600">See your channel</p></div>
                                                 </button>
@@ -322,19 +339,26 @@ const TutorDummy: React.FC = () => {
                         </div>
                         <div className="topbar-right">
                             <div className="flex items-center space-x-4">
-                                <a href="#" className="text-gray-700 hover:text-blue-600 font-medium">My Channel</a>
+                                <a href="#" onClick={handleNonInteractive} className="text-gray-700 hover:text-blue-600 font-medium">My Channel</a>
                                 <h1 className="text-2xl font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors" onClick={() => setCurrentView('dashboard')}>Dashboard</h1>
                             </div>
                             <div className="flex items-center space-x-4">
-                                <button className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors">
+                                <button onClick={handleNonInteractive} className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors">
                                     <i className="fas fa-bell text-lg"></i>
                                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></span>
                                 </button>
-                                <div className="flex items-center space-x-3">
+                                <div onClick={handleNonInteractive} className="flex items-center space-x-3 cursor-pointer">
                                     <div className="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                                         <span className="text-white font-bold text-sm">S</span>
                                     </div>
                                 </div>
+                                <button
+                                    onClick={() => navigate('/login')}
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors flex items-center gap-2"
+                                >
+                                    <i className="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -348,14 +372,14 @@ const TutorDummy: React.FC = () => {
                                         <i className="fas fa-upload text-sm"></i><span>Upload Course</span>
                                     </a>
                                 </li>
-                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#"><i className="fas fa-chart-bar text-sm"></i><span>Analytics</span></a></li>
-                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#"><i className="fas fa-comments text-sm"></i><span>Comments</span></a></li>
-                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#"><i className="fas fa-dollar-sign text-sm"></i><span>Monetization</span></a></li>
-                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#"><i className="fas fa-edit text-sm"></i><span>Edit Uploads</span></a></li>
+                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleNonInteractive}><i className="fas fa-chart-bar text-sm"></i><span>Analytics</span></a></li>
+                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleNonInteractive}><i className="fas fa-comments text-sm"></i><span>Comments</span></a></li>
+                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleNonInteractive}><i className="fas fa-dollar-sign text-sm"></i><span>Monetization</span></a></li>
+                                <li><a className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium" href="#" onClick={handleNonInteractive}><i className="fas fa-edit text-sm"></i><span>Edit Uploads</span></a></li>
                             </ul>
                         </nav>
                         <div className="settings-section p-4">
-                            <button className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium"><i className="fas fa-cog text-sm"></i><span>Channel Setup</span></button>
+                            <button onClick={handleNonInteractive} className="nav-item w-full flex items-center space-x-3 px-4 py-3 font-medium"><i className="fas fa-cog text-sm"></i><span>Channel Setup</span></button>
                         </div>
                     </div>
 
@@ -723,6 +747,41 @@ const TutorDummy: React.FC = () => {
           animation: fade-in 0.3s ease-out;
         }
       `}</style>
+
+            {/* Toast Notification */}
+            {showToast && (
+                <div className="fixed top-6 right-6 z-50 animate-slide-in-fade">
+                    <div className="bg-white border border-gray-200 rounded-xl shadow-2xl px-6 py-4 min-w-[320px] max-w-md">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                                <i className="fas fa-info-circle text-blue-500 text-lg"></i>
+                            </div>
+                            <div className="flex-1 pt-1">
+                                <p className="text-gray-800 font-medium leading-relaxed">
+                                    This section is not part of the current demo scope.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <style>{`
+                @keyframes slide-in-fade {
+                    from {
+                        opacity: 0;
+                        transform: translateX(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                .animate-slide-in-fade {
+                    animation: slide-in-fade 0.3s ease-out;
+                }
+            `}</style>
         </div>
     );
 };

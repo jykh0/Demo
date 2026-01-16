@@ -14,14 +14,29 @@ const Register: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isStudent, setIsStudent] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [hasShownToast, setHasShownToast] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // mirror Astro behavior of dynamic label/placeholder (same text currently)
   }, [role]);
+
+  const handleInputFocus = () => {
+    if (!hasShownToast) {
+      setShowToast(true);
+      setHasShownToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 1000); // Show for 1 second
+    }
+  };
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Demo-only behavior: prevent registration (toast already shown on input focus)
+    // All the original registration logic is commented out for demo
+    /*
     setError('');
     try {
       const res = await registerUser(
@@ -56,6 +71,7 @@ const Register: React.FC = () => {
       }
       setError(msg);
     }
+    */
   }
 
   return (
@@ -102,6 +118,7 @@ const Register: React.FC = () => {
                 required
                 className="form-input"
                 onFocus={(e) => {
+                  handleInputFocus();
                   e.currentTarget.closest('.input-group')?.classList.add('focused');
                 }}
                 onBlur={(e) => {
@@ -125,6 +142,7 @@ const Register: React.FC = () => {
                 required
                 className="form-input"
                 onFocus={(e) => {
+                  handleInputFocus();
                   e.currentTarget.closest('.input-group')?.classList.add('focused');
                 }}
                 onBlur={(e) => {
@@ -149,6 +167,7 @@ const Register: React.FC = () => {
                   required
                   className="form-input"
                   onFocus={(e) => {
+                    handleInputFocus();
                     e.currentTarget.closest('.input-group')?.classList.add('focused');
                   }}
                   onBlur={(e) => {
@@ -368,6 +387,24 @@ const Register: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-6 right-6 z-[9999] animate-slide-in-fade">
+          <div className="bg-white border border-gray-200 rounded-xl shadow-2xl px-6 py-4 min-w-[380px] max-w-md">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                <i className="fas fa-info-circle text-blue-500 text-lg"></i>
+              </div>
+              <div className="flex-1 pt-1">
+                <p className="text-gray-800 font-medium leading-relaxed">
+                  Registration is not available in this demo.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
       .auth-container { 
@@ -1739,6 +1776,22 @@ const Register: React.FC = () => {
           padding: 2rem 1.5rem;
           max-width: 90%;
         }
+      }
+
+      /* Toast Animation */
+      @keyframes slide-in-fade {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      .animate-slide-in-fade {
+        animation: slide-in-fade 0.3s ease-out;
       }
       `}</style>
     </section>
