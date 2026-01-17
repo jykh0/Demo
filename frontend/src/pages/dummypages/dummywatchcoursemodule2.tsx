@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Import Assets from dummyfiles2
 // @ts-ignore
@@ -14,6 +14,7 @@ const DummyWatchCourseModule2: React.FC = () => {
     const [isLiked, setIsLiked] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const navigate = useNavigate();
 
     // Module Indicator - 1 second
     useEffect(() => {
@@ -52,6 +53,11 @@ const DummyWatchCourseModule2: React.FC = () => {
     const toggleLike = () => {
         setIsLiked(!isLiked);
         setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+    };
+
+    // Handle video end - navigate to certificate page
+    const handleVideoEnd = () => {
+        navigate('/dummy-certificate');
     };
 
     return (
@@ -200,8 +206,8 @@ const DummyWatchCourseModule2: React.FC = () => {
                                             <video
                                                 ref={videoRef}
                                                 src={moduleVideo}
-                                                loop
                                                 muted
+                                                onEnded={handleVideoEnd}
                                                 className="w-full h-full object-cover"
                                             />
                                             {/* Mute Control */}
